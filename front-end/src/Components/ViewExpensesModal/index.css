@@ -1,0 +1,113 @@
+.my-modal {
+    min-width: 600px;    /* Occupy the 90% of the screen width */
+} 
+
+.toggleContainer {
+    align-items:flex-end;
+    padding-left: 60px;
+    position: absolute;
+    top:15%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 50px;
+    height: 25px;
+    border: 2px solid #000000;
+    border-radius: 15px;
+    background: #000000;
+    font-weight: bold;
+    color: #000000;
+    cursor: pointer;
+}
+
+.toggleContainerForTotal {
+    margin-left: 380px;
+}
+
+.toggleContainer.left::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 0%;
+    border-radius: 15px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.toggleContainer.right::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 50%;
+    border-radius: 15px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.toggleCheckbox:checked + .toggleContainer.left::before {
+    left: 0%;
+}
+
+.toggleCheckbox:checked + .toggleContainer.right::before {
+    left: 50%;
+}
+
+.toggleContainer>#date {
+    position: absolute;
+    text-align: center;
+    z-index: 1;
+    font-size: 14px;
+}
+
+.toggleContainer>#amount {
+    position: absolute;
+    left: 50%;
+    text-align: center;
+    z-index: 1;
+    font-size: 14px;
+}
+
+.toggleCheckbox {
+    display: none;
+}
+
+.toggleCheckbox:checked + .toggleContainer div:first-child {
+    color: rgb(0, 0, 0);
+    transition: color 0.3s;
+    }
+
+.toggleCheckbox:checked + .toggleContainer div:last-child {
+    color: #000000;
+    transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer div:first-child {
+    color: #000000;
+    transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer div:last-child {
+    color: rgb(0, 0, 0);
+    transition: color 0.3s;
+}
+
+.sortAscendingLabel {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../../../public/images/ascending.png");
+    background-size: 20px, 20px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.sortdescendingLabel {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../../../public/images/descending.png");
+    background-size: 20px, 20px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}

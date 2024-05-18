@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #e8e8e8;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #cfcfcf;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #9a9a9a;
+}
+
+.cardArea {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: "1rem";
+    align-items: flex-start;
+}

@@ -1,0 +1,34 @@
+.flash-message {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .flash-message.success {
+    background-color: #4caf50;
+    color: #ffffff;
+  }
+  
+  .flash-message.error {
+    background-color: #f17a72;
+    color: #ffffff;
+  }
+  
+  .flash-message .icon {
+    margin-right: 10px;
+  }
+  
+  .flash-message .text {
+    margin-left: 5px;
+  }
+  
