@@ -1,15 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/main.go",
-      "use": "@vercel/go"
+  "build": {
+    "env": {
+      "GO_BUILD_FLAGS": "-ldflags '-s -w'"
     }
-  ],
-  "routes": [
-    {
-      "src": "/api(.*)",
-      "dest": "api/main.go"
-    }
-  ]
+  }
 }
