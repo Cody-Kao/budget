@@ -1,13 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"mongodb-budget/server"
+	"net/http"
 )
 
-func main() {
+func handler(w http.ResponseWriter, r *http.Request) {
+	// Initialize the server (which contains all your routes)
 	server := server.InitServer()
-	fmt.Println("Server is running on")
-	log.Fatal(server.ListenAndServe())
+
+	// Serve the HTTP request using your server's handler
+	server.Handler.ServeHTTP(w, r)
+}
+
+func main() {
+	http.HandleFunc("/", handler)
 }
