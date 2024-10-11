@@ -32,8 +32,8 @@ export default function App() {
   const budgetContext = useBudget();
   const { budgets, getBudgetExpenses, isLoggedIn, LogOut } =
     budgetContext || {};
-  const apiURL = process.env.REACT_APP_API_URL;
-
+  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
+  console.log(apiURL);
   function showAddExpenseModal(budgetName: string) {
     setIsAddExpenseModalOpen(true);
     setDefaultValueForAddExpenseModal(budgetName);

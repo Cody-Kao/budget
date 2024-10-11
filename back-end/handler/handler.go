@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mongodb-budget/DB"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gorilla/sessions"
@@ -95,6 +96,7 @@ type DeleteExpenseObject struct {
 // middleware for Cors issue
 func Cors(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("budget-manager-front-end-url"))
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
