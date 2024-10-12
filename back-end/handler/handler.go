@@ -28,11 +28,19 @@ type handlerWithDB struct {
 
 type isLoggedInResponse struct {
 	IsLoggedIn bool `json:"isLoggedIn"`
+	UserName string `json:"userName"`
 }
 
 type signUpResponse struct {
 	Type   bool   `json:"type"`
 	Target string `json:"target"`
+	Msg    string `json:"msg"`
+}
+
+type signInResponse struct {
+	Type   bool   `json:"type"`
+	Target string `json:"target"`
+	Name string `json:"name"`
 	Msg    string `json:"msg"`
 }
 
@@ -185,21 +193,49 @@ func checkSessionExpiredOrNotExist(r *http.Request) (string, error) {
 		fmt.Println("session decode error in checkSessionExpiredOrNotExist", err.Error())
 		return "", err
 	}
-	fmt.Println(session.Values)
+	fmt.Println("session.Values:", session.Values)
 	fmt.Println("check session checkSessionExpiredOrNotExist", session.IsNew)
-
+	if session.Values["account"] == nil {
+		return "", nil
+	}
 	return session.Values["account"].(string), nil
 }
 
 func (h *handlerWithDB) IsLoggedIn(w http.ResponseWriter, r *http.Request) {
-	SID, err := checkSessionExpiredOrNotExist(r)
+	userAccount, err := checkSessionExpiredOrNotExist(r)
+	fmt.Println("userAccount:", userAccount)
 	if err != nil {
 		fmt.Println("error ouccrs in isLoggedIn", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	response := isLoggedInResponse{IsLoggedIn: !(SID == "")}
 	w.Header().Set("Cotent-Type", "application/json")
+	response := isLoggedInResponse{}
+	if userAccount != "" {
+		res := h.UColl.FindOne(r.Context(), bson.M{"account": userAccount})
+		if res.Err() != nil {
+			// 如果是除了ErrNoDocuments的其他錯誤就直接報錯
+			if res.Err() != mongo.ErrNoDocuments {
+				http.Error(w, res.Err().Error(), http.StatusInternalServerError)
+				fmt.Println("database findOne error", res.Err().Error())
+				return
+			} else {
+				// 報ErrNoDocuments代表查無此帳號
+				json.NewEncoder(w).Encode(&response)
+				return
+			}
+		}
+		// decode user from db
+		var user UserObject
+		err = res.Decode(&user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println("database decode error", err.Error())
+			return
+		}
+		response = isLoggedInResponse{IsLoggedIn: true, UserName: user.Name}
+	} 
+	fmt.Println("response from IsLoggedIn:", response)
 	json.NewEncoder(w).Encode(&response)
 }
 
@@ -331,7 +367,7 @@ func (h *handlerWithDB) SignIn(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("data received", data)
 	w.Header().Set("Content-Type", "application/json")
 	// 預設出錯 成功的話再改就好
-	var response signUpResponse = signUpResponse{Type: false}
+	var response signInResponse = signInResponse{Type: false}
 
 	// 檢查登入資料格式是否有誤
 
@@ -439,6 +475,7 @@ func (h *handlerWithDB) SignIn(w http.ResponseWriter, r *http.Request) {
 	// set success response
 	response.Type = true
 	response.Msg = "登入成功!"
+	response.Name = user.Name
 
 	// Encode response to JSON and write to response body
 	if err := json.NewEncoder(w).Encode(&response); err != nil {

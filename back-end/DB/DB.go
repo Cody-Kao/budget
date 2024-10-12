@@ -4,18 +4,17 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// const uri string = "mongodb://localhost:27017" // this is for testing
+const uri string = "mongodb://localhost:27017" // this is for testing
 
 func InitDB() *mongo.Client {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1) // default stable API
-	opts := options.Client().ApplyURI(os.Getenv("mongoDB_uri")).SetServerAPIOptions(serverAPI)
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	client, err := mongo.Connect(ctx, opts)

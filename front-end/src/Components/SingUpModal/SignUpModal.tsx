@@ -21,7 +21,7 @@ export default function SignUpModal({
   const nameRef = useRef<HTMLInputElement>(null);
   const accountRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
+  const apiURL = process.env.REACT_APP_API_TEST_URL;
 
   function handleSignUpCloseWrapper() {
     setShowAlert(false);

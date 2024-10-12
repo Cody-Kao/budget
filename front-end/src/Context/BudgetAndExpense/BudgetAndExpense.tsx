@@ -19,6 +19,8 @@ export interface expenseObject {
 }
 
 export interface BudgetAndExpenseData {
+  userName: string;
+  updateUserName: (name: string) => void;
   budgets: budgetObject[];
   expenses: expenseObject[];
   isLoggedIn: boolean;
@@ -60,13 +62,20 @@ export default function BudgetAndExpenseContext({
 }: {
   children: ReactNode;
 }) {
+  // user name
+  const [userName, setUserName] = useState<string>("未登入使用者");
+  function updateUserName(name: string) {
+    console.log("updateUserName: ", name);
+    setUserName(name);
+  }
+
   const [showLogInAlert, setShowLogInAlert] = useState<boolean>(false);
   const [showFectDataAlert, setShowFetchDataAlert] = useState<boolean>(false);
   // 這個是專門展示所有對Budgets或Expenses CRUD的警告
   const [showPostAlert, setShowPostAlert] = useState<boolean>(false);
   const [showPostAlertMsg, setShowPostAlertMsg] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
+  const apiURL = process.env.REACT_APP_API_TEST_URL;
 
   // 這是一個方便我們自訂錯誤訊息的wrapper，能加工CRUD的警告
   function displaysetShowPostAlert(msg: string) {
@@ -83,8 +92,13 @@ export default function BudgetAndExpenseContext({
           credentials: "include",
         });
         const res = await response.json();
-        console.log(res);
-        if (res.isLoggedIn) setIsLoggedIn(true);
+        console.log("checkLogInStatus:", res);
+        if (res.isLoggedIn) {
+          setIsLoggedIn(true);
+          setUserName(res.userName);
+        } else {
+          setUserName("未登入使用者");
+        }
       } catch (error) {
         setShowLogInAlert(true);
       }
@@ -162,6 +176,7 @@ export default function BudgetAndExpenseContext({
 
   function LogOut() {
     setIsLoggedIn(false);
+    setUserName("未登入使用者");
     // remove the cookie called SID 雖然我們後端在登出的時候有清理過，但有些情況是我們需要手動清理
     /*
     例如說在憑證的加密更改之後還發送請求到後端，這時後端沒辦法抓到存在瀏覽器的"舊加密"憑證，
@@ -521,9 +536,11 @@ export default function BudgetAndExpenseContext({
     // 如果日後要後端資料加載很久可以考慮加上spinner
     <BudgetContext.Provider
       value={{
+        userName,
         budgets,
         expenses,
         isLoggedIn,
+        updateUserName,
         LogIn,
         LogOut,
         getBudgetExpenses,

@@ -6,11 +6,13 @@ import { useBudget } from "../../Context/BudgetAndExpense/BudgetAndExpense";
 type SignInModalProps = {
   isSignInOpen: boolean;
   handleSignInClose: () => void;
+  updateUserName: (name: string) => void;
 };
 
 export default function SignInModal({
   isSignInOpen,
   handleSignInClose,
+  updateUserName: updateUserName,
 }: SignInModalProps) {
   const [accountErrorMsg, setAccountErrorMsg] = useState<string>("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState<string>("");
@@ -19,7 +21,7 @@ export default function SignInModal({
   const accountRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const checkRef = useRef<HTMLInputElement>(null);
-  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
+  const apiURL = process.env.REACT_APP_API_TEST_URL;
   const { LogIn } = useBudget() || {};
 
   // 因為在關閉事件之中不只是要關閉Modal，也要把alert清掉，所以用一個wrapper function來一次做兩件事情
@@ -105,11 +107,12 @@ export default function SignInModal({
           body: JSON.stringify(data),
         });
         const responseData = await response.json();
-
+        console.log("SignInModal: ", responseData);
         // type === true means success, false otherwise
         if (responseData.type) {
           // 加入成功的提示
           console.log(responseData.msg);
+          updateUserName(responseData.name);
           // 關閉登入Modal
           handleSignInClose();
           LogIn!();

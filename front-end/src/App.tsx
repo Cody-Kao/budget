@@ -30,10 +30,16 @@ export default function App() {
   const [displayConfirmLogOut, setDisplayConfirmLogOut] =
     useState<boolean>(false);
   const budgetContext = useBudget();
-  const { budgets, getBudgetExpenses, isLoggedIn, LogOut } =
-    budgetContext || {};
-  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
-  console.log(apiURL);
+  const {
+    userName,
+    updateUserName,
+    budgets,
+    getBudgetExpenses,
+    isLoggedIn,
+    LogOut,
+  } = budgetContext || {};
+  const apiURL = process.env.REACT_APP_API_TEST_URL;
+  console.log("userName from App.tsx: ", userName);
   function showAddExpenseModal(budgetName: string) {
     setIsAddExpenseModalOpen(true);
     setDefaultValueForAddExpenseModal(budgetName);
@@ -111,7 +117,10 @@ export default function App() {
             新增花費
           </Button>
 
-          <div className="ms-auto">
+          <div
+            className="ms-auto"
+            style={{ display: "flex", alignItems: "center" }}
+          >
             {isLoggedIn ? (
               <>
                 <Button
@@ -128,15 +137,6 @@ export default function App() {
                 >
                   註冊新用戶
                 </Button>
-                <Image
-                  src="/images/profile.png"
-                  roundedCircle
-                  style={{
-                    width: "3.5rem",
-                    height: "3.5rem",
-                    backgroundSize: "3.5rem ,3.5rem",
-                  }}
-                />
               </>
             ) : (
               <>
@@ -154,18 +154,29 @@ export default function App() {
                 >
                   註冊
                 </Button>
-                <Image
-                  src="/images/profile.png"
-                  roundedCircle
-                  style={{
-                    width: "3.5rem",
-                    height: "3.5rem",
-                    backgroundSize: "3.5rem ,3.5rem",
-                  }}
-                />
               </>
             )}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginLeft: "3rem",
+              }}
+            >
+              <Image
+                src="/images/profile.png"
+                roundedCircle
+                style={{
+                  width: "3.5rem",
+                  height: "3.5rem",
+                  backgroundSize: "3.5rem ,3.5rem",
+                }}
+              />
+              <span>{userName || "未登入使用者"}</span>
+            </div>
           </div>
+
           {/* confirm Modal for log out */}
           <Modal
             show={displayConfirmLogOut}
@@ -196,6 +207,7 @@ export default function App() {
             handleSignInClose={() => {
               setIsSignInOpen(false);
             }}
+            updateUserName={updateUserName != null ? updateUserName : () => {}}
           />
 
           {/* 註冊Modal */}
