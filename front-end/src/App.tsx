@@ -38,7 +38,7 @@ export default function App() {
     isLoggedIn,
     LogOut,
   } = budgetContext || {};
-  const apiURL = process.env.REACT_APP_API_TEST_URL;
+  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
   console.log("userName from App.tsx: ", userName);
   function showAddExpenseModal(budgetName: string) {
     setIsAddExpenseModalOpen(true);
@@ -66,6 +66,10 @@ export default function App() {
     };
     logOut();
   }
+  // 找看看是否有UNCATEGORIZED_BUDGETID，有的話先存起來以便後續使用
+  const uncategorizedBudget = budgets?.find(
+    (budget) => budget.id === UNCATEGORIZED_BUDGETID
+  );
 
   return (
     <>
@@ -244,8 +248,12 @@ export default function App() {
               />
             );
           })}
-          {budgets?.find((budget) => budget.id === UNCATEGORIZED_BUDGETID) && (
-            <UncategorizedBudgetCard toggleModal={showAddExpenseModal} />
+          {/* 確保uncategorizedBudget的名稱可以被玩家更改且正常顯示 */}
+          {uncategorizedBudget && (
+            <UncategorizedBudgetCard
+              toggleModal={showAddExpenseModal}
+              budgetName={uncategorizedBudget.name || UNCATEGORIZED_BUDGETID}
+            />
           )}
 
           <TotalBudgetAndExpense />

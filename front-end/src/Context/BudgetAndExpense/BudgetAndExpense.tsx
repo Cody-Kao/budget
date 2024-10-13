@@ -75,7 +75,7 @@ export default function BudgetAndExpenseContext({
   const [showPostAlert, setShowPostAlert] = useState<boolean>(false);
   const [showPostAlertMsg, setShowPostAlertMsg] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const apiURL = process.env.REACT_APP_API_TEST_URL;
+  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
 
   // 這是一個方便我們自訂錯誤訊息的wrapper，能加工CRUD的警告
   function displaysetShowPostAlert(msg: string) {

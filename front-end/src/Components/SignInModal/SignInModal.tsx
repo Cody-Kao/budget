@@ -21,7 +21,7 @@ export default function SignInModal({
   const accountRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const checkRef = useRef<HTMLInputElement>(null);
-  const apiURL = process.env.REACT_APP_API_TEST_URL;
+  const apiURL = process.env.REACT_APP_API_PRODUCTION_URL;
   const { LogIn } = useBudget() || {};
 
   // 因為在關閉事件之中不只是要關閉Modal，也要把alert清掉，所以用一個wrapper function來一次做兩件事情
