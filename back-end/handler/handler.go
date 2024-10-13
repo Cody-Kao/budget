@@ -101,11 +101,25 @@ type DeleteExpenseObject struct {
 	ExpenseID string
 }
 
+// 一次連接只能開一個CORS，所以這邊列出所有可以接受的網址
+var allowedOrigins = []string{
+    "http://localhost:3000",
+    os.Getenv("budget-manager-front-end-url"),
+}
+
 // middleware for Cors issue
 func Cors(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("budget-manager-front-end-url"))
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		// 取得該連接的網址
+		origin := r.Header.Get("Origin")
+
+        // Check if the Origin is in the allowedOrigins list
+        for _, o := range allowedOrigins {
+            if o == origin {
+                w.Header().Set("Access-Control-Allow-Origin", o)
+                break
+            }
+        }
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		// 如果要讓fetch request去挾帶cookie就要設定這個
