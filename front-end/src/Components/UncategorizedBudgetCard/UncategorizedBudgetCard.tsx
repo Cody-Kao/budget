@@ -13,7 +13,7 @@ export default function UncategorizedBudgetCard({
 }) {
   const { getBudgetExpenses, budgets } = useBudget() || {};
   const max = budgets?.find(
-    (budget) => budget.name === UNCATEGORIZED_BUDGETID
+    (budget) => budget.id === UNCATEGORIZED_BUDGETID
   )?.max;
   console.log(max);
   const amount = getBudgetExpenses!(UNCATEGORIZED_BUDGETID).reduce(
