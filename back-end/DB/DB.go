@@ -14,23 +14,28 @@ import (
 //const uri string = "mongodb://localhost:27017" // this is for testing; os.Getenv("mongoDB_uri") is for production
 
 func InitDB() *mongo.Client {
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1) // default stable API
-	opts := options.Client().ApplyURI(os.Getenv("mongoDB_uri")).SetServerAPIOptions(serverAPI)
+    serverAPI := options.ServerAPI(options.ServerAPIVersion1) // default stable API
+    opts := options.Client().ApplyURI(os.Getenv("mongoDB_uri")).SetServerAPIOptions(serverAPI)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	client, err := mongo.Connect(ctx, opts)
-	if err != nil {
-		log.Fatal("Error in Database Connecting:", err)
-	}
+    // Separate context for connecting, so that it will have more time to process instead of timeout
+    connectCtx, connectCancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer connectCancel()
 
-	defer cancel()
+    client, err := mongo.Connect(connectCtx, opts)
+    if err != nil {
+        log.Fatal("Error in Database Connecting:", err)
+    }
 
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal("Error in Database Ping:", err)
-	}
+    // Separate context for pinging
+    pingCtx, pingCancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer pingCancel()
 
-	fmt.Println("DB is pinged successfully!")
+    err = client.Ping(pingCtx, nil)
+    if err != nil {
+        log.Fatal("Error in Database Ping:", err)
+    }
 
-	return client
+    fmt.Println("DB is pinged successfully!")
+    return client
 }
+
