@@ -464,6 +464,15 @@ func (h *handlerWithDB) SignIn(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("is session new?", session.IsNew)
 		session.Values["account"] = data.Account
+		// Set session options for persistent session
+        session.Options = &sessions.Options{
+            Path:     "/",
+            MaxAge:   86400 * 7, // 7 days
+            HttpOnly: true,
+            // Set SameSite as needed
+            SameSite: http.SameSiteNoneMode, // or SameSiteStrictMode, SameSiteNoneMode, 確保可以接受corss-site cookie
+            Secure:   true, // Set to true if served over HTTPS
+        }
 		// Save session
 		if err := session.Save(r, w); err != nil {
 			fmt.Println("Error saving session:", err.Error())
@@ -477,10 +486,20 @@ func (h *handlerWithDB) SignIn(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("is session new?", session.IsNew)
 		session.Values["account"] = data.Account
-		session.Options.MaxAge = 0 // 0 means last until browser session ends
+		// Set session options for one-time session
+        session.Options = &sessions.Options{
+            Path:     "/",
+            MaxAge:   0, // Session expires when the browser closes
+            HttpOnly: true,
+            // Set SameSite as needed
+            SameSite: http.SameSiteNoneMode, // or SameSiteStrictMode, SameSiteNoneMode
+            Secure:   true, // Set to true if served over HTTPS
+        }
+		
 		// Save session
 		if err := session.Save(r, w); err != nil {
 			fmt.Println("Error saving session:", err.Error())
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 	}
 
